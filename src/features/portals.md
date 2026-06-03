@@ -8,7 +8,7 @@ When the player lands on a portal tile, the client sends a `CHANGE_MAP` [MsgActi
 
 ## Passageway (Portal Tiles)
 
-Each [DMap](../files/formats/dmap.md) file contains an non-consecutive indexed array of `PassageInfo` (below) with the coordinates of the portal tiles. Each element of this array is called a passageway. Every time the player moves, the client checks whether the hero's coordinates match an entry in the `PassageInfo` array, if so, sends a `CHANGE_MAP` [MsgAction](../network/messages/msgaction.md) containing the x, y coordinate of the portal tile to the server.
+Each [DMap](../files/formats/dmap.md) file contains an non-consecutive indexed array of `PassageInfo` (below) with the coordinates of the portal tiles. Each element of this array is called a passageway. Every time the hero moves, the client checks whether the hero's coordinates match an entry in the `PassageInfo` array, if so, sends a `CHANGE_MAP` [MsgAction](../network/messages/msgaction.md) containing the x, y coordinate of the portal tile to the server.
 
 ```
 PassageInfo {
@@ -24,11 +24,11 @@ The passageway index is used in the client-side check to see if the tile is a po
 
 In the leaked binaries, the server loads its own copy of each [DMap](../files/formats/dmap.md) with the same `PassageInfo` array. Upon receiving a `CHANGE_MAP` [MsgAction](../network/messages/msgaction.md), it looks up the passageway index with the reported `x, y`, queries the `cq_passway` table to get the destination map and portal id, then queries the `cq_portal` table to get the destination coordinates.
 
-The server returns the map id and destination coordinates to the client via `ENTER_MAP` [MsgAction](../network/messages/msgaction.md). The client then loads the game map and sets the x, y position of the player.
+The server returns the map id and destination coordinates to the client via `ENTER_MAP` [MsgAction](../network/messages/msgaction.md). The client then loads the game map and sets the x, y position of the hero.
 
-Separating portal tiles (passageway) from destination coordinates means the server can send a player to any portal destination point without the player walking through a portal tile.
+Separating portal tiles (passageway) from destination coordinates means the server can send a player to any portal destination point without the hero necessarily walking through a portal tile.
 
 
 ## Security Considerations
 
-Client DMap modification has no effect on portal resolution as the server uses its own copy. However, the reported `x, y` in the message is client-supplied and must be validated server-side to confirm the coordinates correspond to a real portal tile using the server's own map data, and confirm the player is within a couple of tiles of the reported position.
+Client DMap modification has no effect on portal resolution as the server uses its own copy. However, the reported `x, y` in the message is client-supplied and must be validated server-side to confirm the coordinates correspond to a real portal tile using the server's own map data, and confirm the hero is within a couple of tiles of the reported position.
